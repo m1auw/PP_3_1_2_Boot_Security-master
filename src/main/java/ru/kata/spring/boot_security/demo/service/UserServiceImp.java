@@ -6,10 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRep;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 
 @Service
-@Transactional
 public class UserServiceImp implements UserService {
 
     private final UserRep userRep;
@@ -24,20 +24,38 @@ public class UserServiceImp implements UserService {
         userRep.save(user);
     }
 
+    // Так? Не так?
     @Override
-    public void delete(Long id) {
-        userRep.deleteById(id);
+    public void update(User user) throws AccountNotFoundException {
+        if (userRep.findById(user.getId()).isPresent()) {
+            userRep.save(user);
+        } else {
+            throw new AccountNotFoundException();
+        }
     }
 
     @Override
-    @Transactional(readOnly = true)
+    public void delete(Long id) throws AccountNotFoundException {
+        User user = userRep.findById(id).orElse(null);
+        if (user != null) {
+            userRep.delete(user);
+        } else {
+            throw new AccountNotFoundException();
+        }
+    }
+
+    @Override
     public User getUserById(Long id) {
         return userRep.findById(id).get();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRep.findAll();
+    }
+
+    @Override
+    public User getUserByName(String name) {
+        return userRep.findByName(name);
     }
 }
