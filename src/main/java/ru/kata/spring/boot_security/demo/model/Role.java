@@ -54,4 +54,8 @@ public class Role {
         return Objects.hash(id, name);
     }
 
+    @Override
+    public String toString() {
+        return name.substring(5);
+    }
 }

@@ -4,14 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная страница</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Подключение CSS файла -->
+    <link rel="stylesheet" href="styles.css">
 </head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1, h2 {
+        color: #4CAF50;
+    }
+
+    nav {
+        margin-bottom: 20px;
+    }
+
+    a.button, button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    a.button:hover, button:hover {
+        background-color: #45a049;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+</style>
 <body>
 <header>
     <h1>Добро пожаловать на главную страницу!</h1>
     <nav>
         <ul>
-            <li><a href="/login">Войти</a></li>
+            <li><a href="/login" class="button">Войти</a></li>
         </ul>
     </nav>
 </header>

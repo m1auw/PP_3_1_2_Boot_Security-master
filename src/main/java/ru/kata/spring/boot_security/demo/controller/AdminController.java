@@ -2,16 +2,20 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -19,17 +23,21 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-//    @GetMapping
-//    public String getAdmin(Model model) {
-//        model.addAttribute("admin", new User());
-//        return "admin";
-//    }
+    @GetMapping
+    public String getUsers(Model model) {
+        model.addAttribute("admin");
+        return "admin";
+    }
 
     @GetMapping("/users")
     public String listUsers(Model model) {
@@ -45,33 +53,58 @@ public class AdminController {
     }
 
     @PostMapping("/add")
-    public String addUser(@RequestParam String name, @RequestParam String email, @RequestParam String password) {
-        User user = new User(name, email, password);
+    public String addUser(@RequestParam String name, @RequestParam String email, @RequestParam String password,
+                          @RequestParam(required = false) boolean isAdmin) {
+
+        User user = new User(name, email, passwordEncoder.encode(password));
+
+        adminRole(isAdmin, user);
         userService.save(user);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/edit")
     public String showEditFrom(Model model, @RequestParam Long id) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
-        return "users/add";
+        return "users/edit";
     }
 
     @PostMapping("/edit")
     public String editUser(@RequestParam Long id, @RequestParam String name, @RequestParam String email,
-                           @RequestParam String password) throws AccountNotFoundException {
+                           @RequestParam String password, @RequestParam(required = false) boolean isAdmin)
+            throws AccountNotFoundException {
+
         User user = userService.getUserById(id);
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(password);
+
+        if (password != null && !password.isEmpty()) {
+            user.setPassword(passwordEncoder.encode(password));
+        }
+
+        adminRole(isAdmin, user);
+
         userService.update(user);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam Long id) throws AccountNotFoundException {
         userService.delete(id);
-        return "redirect:/users";
+        return "redirect:/admin/users";
+    }
+
+    private void adminRole(@RequestParam(required = false) boolean isAdmin, User user) {
+        List<Role> roles = new ArrayList<>();
+        Role userRole = roleService.findByName("ROLE_USER");
+        roles.add(userRole);
+
+        if (isAdmin) {
+            Role adminRole = roleService.findByName("ROLE_ADMIN");
+            roles.add(adminRole);
+        }
+
+        user.setRoles(roles);
     }
 }
