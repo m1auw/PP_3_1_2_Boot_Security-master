@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,8 +26,12 @@
 
         <div class="p-0 pl-3 bg-white" style="width: 300px">
             <nav class="nav flex-column">
-                <a class="d-block p-3" href="/admin">Admin</a>
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="d-block p-3" href="/admin">Admin</a>
+                </div>
+                <div sec:authorize="hasRole('ROLE_USER')">
                 <a class="d-block p-3 bg-primary text-white" href="/user">User</a>
+                </div>
             </nav>
         </div>
 
