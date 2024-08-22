@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +14,7 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,22 +34,18 @@ public class AdminController {
     }
 
     @GetMapping
-    public String getUsers(Model model) {
-        model.addAttribute("admin");
-        return "admin";
-    }
-
-    @GetMapping("/users")
-    public String listUsers(Model model) {
+    public String adminPage(Model model, Principal principal) {
+        User admin = userService.getUserByName(principal.getName());
+        model.addAttribute("admin", admin);
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        return "users/list";
+        return "admin";
     }
 
     @GetMapping("/add")
     public String showAddFrom(Model model) {
-        model.addAttribute("user", new User());
-        return "users/add";
+        model.addAttribute("userAdd", new User());
+        return "admin";
     }
 
     @PostMapping("/add")
@@ -60,14 +56,14 @@ public class AdminController {
 
         adminRole(isAdmin, user);
         userService.save(user);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @GetMapping("/edit")
     public String showEditFrom(Model model, @RequestParam Long id) {
         User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "users/edit";
+        model.addAttribute("userEdit", user);
+        return "admin";
     }
 
     @PostMapping("/edit")
@@ -86,13 +82,13 @@ public class AdminController {
         adminRole(isAdmin, user);
 
         userService.update(user);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @PostMapping("/delete")
     public String deleteUser(@RequestParam Long id) throws AccountNotFoundException {
         userService.delete(id);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     private void adminRole(@RequestParam(required = false) boolean isAdmin, User user) {

@@ -3,63 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Администрация</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Admin panel</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
 </head>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        margin: 0;
-        padding: 20px;
-    }
+<body style="background-color: #f2f2f2">
+<header class="bg-dark text-white p-3 h4">
+    <span th:text="${admin.email}" class="font-weight-bold"></span>
+    <span class="font-weight-light">with roles:</span>
+    <span th:text="${admin.roles}" class="font-weight-light"></span>
 
-    h1, h2 {
-        color: #4CAF50;
-    }
+    <a href="/logout" class="text-white-50 bg-dark float-right">Logout</a>
+</header>
 
-    nav {
-        margin-bottom: 20px;
-    }
+<div>
 
-    a.button, button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 15px;
-        text-decoration: none;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        display: inline-block;
-    }
+    <div class="row">
 
-    a.button:hover, button:hover {
-        background-color: #45a049;
-    }
+        <div class="p-0 pl-3 bg-white" style="width: 300px">
+            <nav class="nav flex-column">
+                <a class="d-block p-3 bg-primary text-white" href="/admin">Admin</a>
+                <a class="d-block p-3" href="/user">User</a>
+            </nav>
+        </div>
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+        <div class="col">
+            <h1 class="pb-3">
+                Admin panel
+            </h1>
+            <div
+                    style="height: 50px;
+                    width: 1200px;
+                    background-color: white;
+                     display: flex;
+                     align-items: center;
+                     justify-content: space-between;
+                     padding: 10px">
 
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
+                <span class="font-weight-bold">All Users</span>
+                <button
+                   type="button"
+                   class="btn btn-primary float-right"
+                   data-toggle="modal"
+                   data-target="#addUserModal">
 
-    th {
-        background-color: #f2f2f2;
-    }
+                    New User
 
-</style>
-<body>
-    <h2>Добро пожаловать в панель администратора</h2>
-    <nav>
-        <a href="/admin/users" class="button">Управление пользователями</a>
-        <a href="/logout" class="button">Выход</a>
-    </nav>
+                </button>
+
+            </div>
+            <table class="table bg-white" style="width: 1200px">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Роль</th>
+                    <th scope="col">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${users}">
+                    <td th:text="${a.id}"></td>
+                    <td th:text="${a.name}"></td>
+                    <td th:text="${a.email}"></td>
+                    <td th:text="${a.roles}"></td>
+                    <td>
+                        <a th:href="@{/admin/edit(id=${a.id})}"
+                           type="button"
+                           class="btn btn-info" data-toggle="modal"
+                           data-target="#editUserModal">
+
+                            Edit
+
+                        </a>
+                        <form th:action="@{/admin/delete}" method="post" style="display:inline;">
+                            <input type="hidden" name="id" th:value="${a.id}"/>
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Модальное окно для добавления пользователя -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Добавить пользователя</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/admin/add}" method="post">
+                    <div class="form-group">
+                        <label for="name">Имя</label>
+                        <input type="text" class="form-control" name="name" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" name="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" class="form-control" name="password" id="password" required>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="isAdmin">
+                        <label class="form-check-label">Администратор</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования пользователя -->
+<div th:if="${userEdit != null}" class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Редактировать пользователя</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/admin/edit}" method="post">
+                    <input type="hidden" name="id" id="editUserId" th:value="${userEdit.id}">
+                    <div class="form-group">
+                        <label for="editName">Имя</label>
+                        <input type="text" class="form-control" name="name" id="editName" th:value="${userEdit.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" class="form-control" name="email" id="editEmail" th:value="${userEdit.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">Пароль</label>
+                        <input type="password" class="form-control" name="password" id="editPassword" th:field="${userEdit.password}">
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="isAdmin" id="editIsAdmin" th:checked="${userEdit.isAdmin}">
+                        <label class="form-check-label" for="editIsAdmin">Администратор</label>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
