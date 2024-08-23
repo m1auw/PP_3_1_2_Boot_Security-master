@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
@@ -67,8 +64,8 @@ public class AdminController {
     }
 
     @PostMapping("/edit")
-    public String editUser(@RequestParam Long id, @RequestParam String name, @RequestParam String email,
-                           @RequestParam String password, @RequestParam(required = false) boolean isAdmin)
+    public String editUser(@ModelAttribute Long id, @ModelAttribute String name, @ModelAttribute String email,
+                           @ModelAttribute String password, @RequestParam(required = false) boolean isAdmin)
             throws AccountNotFoundException {
 
         User user = userService.getUserById(id);
