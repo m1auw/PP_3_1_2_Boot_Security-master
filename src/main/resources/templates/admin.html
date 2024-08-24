@@ -44,10 +44,10 @@
 
                 <span class="font-weight-bold">All Users</span>
                 <button
-                   type="button"
-                   class="btn btn-primary float-right"
-                   data-toggle="modal"
-                   data-target="#addUserModal">
+                        type="button"
+                        class="btn btn-primary float-right"
+                        data-toggle="modal"
+                        data-target="#addUserModal">
 
                     New User
 
@@ -71,14 +71,16 @@
                     <td th:text="${a.email}"></td>
                     <td th:text="${a.roles}"></td>
                     <td>
-                        <a th:href="@{/admin/edit(id=${a.id})}"
-                           type="button"
-                           class="btn btn-info" data-toggle="modal"
-                           data-target="#editUserModal">
+                        <button
+                                type="button"
+                                class="btn btn-info"
+                                data-toggle="modal"
+                                data-target="#editUserModal"
+                                th:attr="data-id=${a.id}, data-name=${a.name}, data-email=${a.email}, data-password=${a.password}">
 
                             Edit
 
-                        </a>
+                        </button>
                         <form th:action="@{/admin/delete}" method="post" style="display:inline;">
                             <input type="hidden" name="id" th:value="${a.id}"/>
                             <button class="btn btn-danger" type="submit">Delete</button>
@@ -94,7 +96,8 @@
 </div>
 
 <!-- Модальное окно для добавления пользователя -->
-<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -118,8 +121,8 @@
                         <input type="password" class="form-control" name="password" id="password" required>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="isAdmin">
-                        <label class="form-check-label">Admin</label>
+                        <input type="checkbox" class="form-check-input" name="isAdmin" id="addIsAdmin">
+                        <label class="form-check-label" for="addIsAdmin">Admin</label>
                     </div>
                     <button type="submit" class="btn btn-primary float-right">Save</button>
                 </form>
@@ -129,7 +132,8 @@
 </div>
 
 <!-- Модальное окно для редактирования пользователя -->
-<div th:if="${userEdit != null}" class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog"
+     aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -140,30 +144,29 @@
             </div>
             <div class="modal-body">
                 <form th:action="@{/admin/edit}" method="post">
-                    <input type="hidden" name="id" id="editUserId" th:value="${userEdit.id}">
+                    <input type="hidden" name="id" id="editUserId">
                     <div class="form-group">
                         <label for="editName">Name</label>
-                        <input type="text" class="form-control" name="name" id="editName" th:value="${userEdit.name}" required>
+                        <input type="text" class="form-control" name="name" id="editName" required>
                     </div>
                     <div class="form-group">
                         <label for="editEmail">Email</label>
-                        <input type="email" class="form-control" name="email" id="editEmail" th:value="${userEdit.email}" required>
+                        <input type="email" class="form-control" name="email" id="editEmail" required>
                     </div>
                     <div class="form-group">
                         <label for="editPassword">Password</label>
-                        <input type="password" class="form-control" name="password" id="editPassword" th:field="${userEdit.password}">
+                        <input type="password" class="form-control" name="password" id="editPassword">
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" name="isAdmin" id="editIsAdmin" th:checked="${userEdit.roles.contains('ROLE_ADMIN')}"/>
+                        <input type="checkbox" class="form-check-input" name="isAdmin" id="editIsAdmin"/>
                         <label class="form-check-label" for="editIsAdmin">Admin</label>
                     </div>
-                    <button type="submit" class="btn btn-warning float-right">Save</button>
+                    <button type="submit" class="btn btn-primary float-right">Save</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -176,5 +179,21 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+
+<script>
+    $('#editUserModal').on('show.bs.modal',
+        function (event) {
+            var button = $(event.relatedTarget);
+            var userId = button.data('id');
+            var userName = button.data('name');
+            var userEmail = button.data('email');
+
+            var modal = $(this);
+            modal.find('.modal-body #editUserId').val(userId);
+            modal.find('.modal-body #editName').val(userName);
+            modal.find('.modal-body #editEmail').val(userEmail);
+        });
+</script>
+
 </body>
 </html>

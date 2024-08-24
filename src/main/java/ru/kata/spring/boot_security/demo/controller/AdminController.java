@@ -39,12 +39,6 @@ public class AdminController {
         return "admin";
     }
 
-    @GetMapping("/add")
-    public String showAddFrom(Model model) {
-        model.addAttribute("userAdd", new User());
-        return "admin";
-    }
-
     @PostMapping("/add")
     public String addUser(@RequestParam String name, @RequestParam String email, @RequestParam String password,
                           @RequestParam(required = false) boolean isAdmin) {
@@ -56,16 +50,9 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/edit")
-    public String showEditFrom(Model model, @RequestParam Long id) {
-        User user = userService.getUserById(id);
-        model.addAttribute("userEdit", user);
-        return "admin";
-    }
-
     @PostMapping("/edit")
-    public String editUser(@ModelAttribute Long id, @ModelAttribute String name, @ModelAttribute String email,
-                           @ModelAttribute String password, @RequestParam(required = false) boolean isAdmin)
+    public String editUser(@RequestParam Long id, @RequestParam String name, @RequestParam String email,
+                           @RequestParam String password, @RequestParam(required = false) boolean isAdmin)
             throws AccountNotFoundException {
 
         User user = userService.getUserById(id);

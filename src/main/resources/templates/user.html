@@ -26,12 +26,14 @@
 
         <div class="p-0 pl-3 bg-white" style="width: 300px">
             <nav class="nav flex-column">
-                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <div th:if="${currentUser.roles.size()>1}">
+                    <!-- Я правда не знаю почему:
+                         sec:authorize="hasRole('ROLE_ADMIN')" (ничего не делает)
+                         th:if="${currentUser.roles.contains('ROLE_ADMIN')}" (ссылку не видно у админа)
+                    -->
                     <a class="d-block p-3" href="/admin">Admin</a>
                 </div>
-                <div sec:authorize="hasRole('ROLE_USER')">
                 <a class="d-block p-3 bg-primary text-white" href="/user">User</a>
-                </div>
             </nav>
         </div>
 

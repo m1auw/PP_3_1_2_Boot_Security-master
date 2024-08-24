@@ -1,13 +1,12 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.UserRep;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
 
@@ -15,16 +14,16 @@ import java.security.Principal;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserRep userRep;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserRep userRep) {
-        this.userRep = userRep;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
     public String getUsers(Model model, Principal principal) {
-        User currentUser = userRep.findByName(principal.getName());
+        User currentUser = userService.getUserByName(principal.getName());
         model.addAttribute("currentUser", currentUser);
         return "user";
     }
