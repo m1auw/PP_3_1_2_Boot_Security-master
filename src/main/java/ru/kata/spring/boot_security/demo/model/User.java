@@ -1,5 +1,8 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -28,20 +31,10 @@ public class User {
     )
     private Collection<Role> roles;
 
+    @Transient
+    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
+
     public User() {
-    }
-
-    public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-
-    public User(String name, String email, String password, Collection<Role> roles) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.roles = roles;
     }
 
     public Long getId() {
@@ -73,7 +66,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = encoder.encode(password);
     }
 
     public Collection<Role> getRoles() {

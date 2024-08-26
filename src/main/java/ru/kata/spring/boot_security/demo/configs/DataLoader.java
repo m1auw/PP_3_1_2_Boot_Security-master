@@ -2,7 +2,6 @@ package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -16,13 +15,11 @@ public class DataLoader implements CommandLineRunner {
 
     private final RoleRep roleRepository;
     private final UserRep userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DataLoader(RoleRep roleRepository, UserRep userRepository, PasswordEncoder passwordEncoder) {
+    public DataLoader(RoleRep roleRepository, UserRep userRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class DataLoader implements CommandLineRunner {
 
             User admin = new User();
             admin.setName("admin");
-            admin.setPassword(encodePassword("admin"));
+            admin.setPassword("admin");
             admin.setEmail("admin@admin.com");
             admin.setRoles(aroles);
             userRepository.save(admin);
@@ -51,15 +48,11 @@ public class DataLoader implements CommandLineRunner {
 
             User user = new User();
             user.setName("user");
-            user.setPassword(encodePassword("user"));
+            user.setPassword("user");
             user.setEmail("user@user.com");
             user.setRoles(uroles);
             userRepository.save(user);
             System.out.println("Added user");
         }
-    }
-
-    private String encodePassword(String password) {
-        return passwordEncoder.encode(password);
     }
 }

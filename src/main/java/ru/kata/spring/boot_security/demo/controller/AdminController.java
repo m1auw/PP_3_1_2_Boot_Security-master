@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,13 +20,11 @@ public class AdminController {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -40,31 +37,26 @@ public class AdminController {
     }
 
     @PostMapping("/add")
-    public String addUser(@RequestParam String name, @RequestParam String email, @RequestParam String password,
+    public String addUser(@ModelAttribute User user,
                           @RequestParam(required = false) boolean isAdmin) {
-
-        User user = new User(name, email, passwordEncoder.encode(password));
-
         adminRole(isAdmin, user);
         userService.save(user);
         return "redirect:/admin";
     }
 
     @PostMapping("/edit")
-    public String editUser(@RequestParam Long id, @RequestParam String name, @RequestParam String email,
-                           @RequestParam String password, @RequestParam(required = false) boolean isAdmin)
-            throws AccountNotFoundException {
-
+    public String editUser(@RequestParam Long id,
+                           @RequestParam String name,
+                           @RequestParam String email,
+                           @RequestParam String password,
+                           @RequestParam(required = false) boolean isAdmin) throws AccountNotFoundException {
         User user = userService.getUserById(id);
         user.setName(name);
         user.setEmail(email);
-
         if (password != null && !password.isEmpty()) {
-            user.setPassword(passwordEncoder.encode(password));
+            user.setPassword(password);
         }
-
         adminRole(isAdmin, user);
-
         userService.update(user);
         return "redirect:/admin";
     }
