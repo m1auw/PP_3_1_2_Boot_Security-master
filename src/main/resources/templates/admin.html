@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru"  xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -120,9 +120,12 @@
                         <label for="password">Password</label>
                         <input type="password" class="form-control" name="password" id="password" required>
                     </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="isAdmin" id="addIsAdmin">
-                        <label class="form-check-label" for="addIsAdmin">Admin</label>
+                    <div class="form-group">
+                        <label for="roles">Roles</label>
+                        <select multiple name="roles" class="form-control" id="roles">
+                            <option th:each="role : ${roles}"
+                                    th:value="${role.id}" th:text="${role.name}"></option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary float-right">Save</button>
                 </form>
@@ -143,7 +146,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form th:action="@{/admin/edit}" method="post">
+                <form th:action="@{/admin/edit}"  method="post">
                     <input type="hidden" name="id" id="editUserId">
                     <div class="form-group">
                         <label for="editName">Name</label>
@@ -157,9 +160,12 @@
                         <label for="editPassword">Password</label>
                         <input type="password" class="form-control" name="password" id="editPassword">
                     </div>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="isAdmin" id="editIsAdmin"/>
-                        <label class="form-check-label" for="editIsAdmin">Admin</label>
+                    <div class="form-group">
+                        <label for="roles">Roles</label>
+                        <select multiple name="roles" class="form-control" id="roles">
+                            <option th:each="role : ${roles}"
+                                    th:value="${role.id}" th:text="${role.name}"></option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary float-right">Save</button>
                 </form>

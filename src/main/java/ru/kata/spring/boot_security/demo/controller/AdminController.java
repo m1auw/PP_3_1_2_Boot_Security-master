@@ -31,15 +31,18 @@ public class AdminController {
     public String adminPage(Model model, Principal principal) {
         User admin = userService.getUserByName(principal.getName());
         model.addAttribute("admin", admin);
+
+        List<Role> roles = new ArrayList<>();
+        roles.addAll(roleService.findAll());
+        model.addAttribute("roles", roles);
+
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
         return "admin";
     }
 
     @PostMapping("/add")
-    public String addUser(@ModelAttribute User user,
-                          @RequestParam(required = false) boolean isAdmin) {
-        adminRole(isAdmin, user);
+    public String addUser(@ModelAttribute User user) {
         userService.save(user);
         return "redirect:/admin";
     }
@@ -49,14 +52,14 @@ public class AdminController {
                            @RequestParam String name,
                            @RequestParam String email,
                            @RequestParam String password,
-                           @RequestParam(required = false) boolean isAdmin) throws AccountNotFoundException {
+                           @RequestParam List<Role> roles) throws AccountNotFoundException {
         User user = userService.getUserById(id);
         user.setName(name);
         user.setEmail(email);
         if (password != null && !password.isEmpty()) {
             user.setPassword(password);
         }
-        adminRole(isAdmin, user);
+        user.setRoles(roles);
         userService.update(user);
         return "redirect:/admin";
     }
@@ -67,16 +70,4 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    private void adminRole(@RequestParam(required = false) boolean isAdmin, User user) {
-        List<Role> roles = new ArrayList<>();
-        Role userRole = roleService.findByName("ROLE_USER");
-        roles.add(userRole);
-
-        if (isAdmin) {
-            Role adminRole = roleService.findByName("ROLE_ADMIN");
-            roles.add(adminRole);
-        }
-
-        user.setRoles(roles);
-    }
 }
