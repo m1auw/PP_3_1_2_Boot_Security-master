@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRep;
-import ru.kata.spring.boot_security.demo.repository.UserRep;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
