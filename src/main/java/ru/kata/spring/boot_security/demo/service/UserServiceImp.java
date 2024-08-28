@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRep;
@@ -12,21 +13,24 @@ import java.util.List;
 public class UserServiceImp implements UserService {
 
     private final UserRep userRep;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImp(UserRep userRep) {
+    public UserServiceImp(UserRep userRep, PasswordEncoder encoder) {
+        this.encoder = encoder;
         this.userRep = userRep;
     }
 
     @Override
     public void save(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
         userRep.save(user);
     }
 
-    // Так? Не так?
     @Override
     public void update(User user) throws AccountNotFoundException {
         if (userRep.findById(user.getId()).isPresent()) {
+            user.setPassword(encoder.encode(user.getPassword()));
             userRep.save(user);
         } else {
             throw new AccountNotFoundException();

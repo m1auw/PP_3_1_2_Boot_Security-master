@@ -31,9 +31,6 @@ public class User {
     )
     private Collection<Role> roles;
 
-    @Transient
-    private final PasswordEncoder encoder = new BCryptPasswordEncoder();
-
     public User() {
     }
 
@@ -66,7 +63,7 @@ public class User {
     }
 
     public void setPassword(String password) {
-        this.password = encoder.encode(password);
+        this.password = password;
     }
 
     public Collection<Role> getRoles() {

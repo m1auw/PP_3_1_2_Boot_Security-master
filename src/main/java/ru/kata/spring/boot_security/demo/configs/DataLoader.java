@@ -7,6 +7,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRep;
 import ru.kata.spring.boot_security.demo.repository.UserRep;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
 
@@ -14,12 +15,12 @@ import java.util.List;
 public class DataLoader implements CommandLineRunner {
 
     private final RoleRep roleRepository;
-    private final UserRep userRepository;
+    private final UserService userService;
 
     @Autowired
-    public DataLoader(RoleRep roleRepository, UserRep userRepository) {
+    public DataLoader(RoleRep roleRepository, UserService userRepository) {
         this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
+        this.userService = userRepository;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class DataLoader implements CommandLineRunner {
             admin.setPassword("admin");
             admin.setEmail("admin@admin.com");
             admin.setRoles(aroles);
-            userRepository.save(admin);
+            userService.save(admin);
             System.out.println("Added admin");
 
             User user = new User();
@@ -51,7 +52,7 @@ public class DataLoader implements CommandLineRunner {
             user.setPassword("user");
             user.setEmail("user@user.com");
             user.setRoles(uroles);
-            userRepository.save(user);
+            userService.save(user);
             System.out.println("Added user");
         }
     }
